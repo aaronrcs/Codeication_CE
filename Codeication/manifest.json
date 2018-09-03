@@ -34,7 +34,7 @@
 		"default_popup":"popup.html"
 
 	},
-	"permissions":["notifications", "tabs"]
+	"permissions":["notifications", "tabs", "storage"]
 
 
 

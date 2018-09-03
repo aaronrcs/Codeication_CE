@@ -12,7 +12,7 @@ let timerStates = {
 
 
 
-// Add message listeners for messages from timer.js
+// Add message listeners for messages from programmingTimer.js
 chrome.runtime.onMessage.addListener(
 	function(request, sender, sendResponse) {
 		// Only start timer if timer was initially off. No delay.
@@ -47,9 +47,9 @@ function startTimer() {
 		break:"Take a Break!"
 
 	}
-	var start = moment();
+	let start = moment();
 	timer = setInterval(function() {
-		var difference = moment().diff(start, 'seconds');
+		let difference = moment().diff(start, 'seconds');
 		
 		let length = localStorage["time-selection"] || 10
 	    if (difference > length) {
@@ -68,7 +68,7 @@ function startTimer() {
 	}, 1000);
 }
 
-// Will send a message to programming.js to keep updating the time in m:ss format
+// Will send a message to programmingTimer.js to keep updating the time in m:ss format
 function sendUpdatedTime(difference) {
 	var time = moment().startOf("day").seconds(difference).format("m:ss");
 	chrome.runtime.sendMessage({

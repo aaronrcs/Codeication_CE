@@ -8,10 +8,10 @@ chrome.runtime.onMessage.addListener(
 
 		let paragraphs = document.getElementsByTagName('p');
 
-		for(elt of paragraphs){
+		for(i of paragraphs){
 
-			// elt.style['background-color'] = '#FF00FF';
-			elt.innerHTML = "<strong>" + request.break + "</strong>"
+			i.style['color'] = 'red'
+			i.innerHTML = "<strong>" + request.break + "</strong>"
 		}
 
 	  }
@@ -49,7 +49,13 @@ function timeButtonOnClickHandler(event) {
 
     document.getElementById("time").innerText = timeSelected // Will show user what time was selected below buttons 
         
-    localStorage["time-selection"] = timeSelected; // Save in localstorage.
+	localStorage["time-selection"] = timeSelected; // Save in localstorage.
+	
+	//Saving user data using Storage API.
+	// chrome.storage.sync.set({'time': timeSelected}, function() {
+		
+	// 	console.log('You choose ' + timeSelected + ' minutes.' );
+	//   });
     
 }
 
