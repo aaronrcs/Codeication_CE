@@ -7,7 +7,8 @@ let timerStates = {
 },
     stateKey = "off",
     currentState = timerStates[stateKey],
-    timer,
+	timer,
+	currentTime,
     timeout;
 
 
@@ -17,60 +18,87 @@ chrome.runtime.onMessage.addListener(
 	function(request, sender, sendResponse) {
 		// Only start timer if timer was initially off. No delay.
 		if (request.command === "startTimer" && stateKey === "off") {
-			startTimer()
+			startTimer(currentTime);
+
 			// changeToNextState(false);
 
 			sendResponse({message: "Timer started."});
 		}
-		// Only clear timers if timer is not off.
-		else if (request.command === "endTimer" && stateKey !== "off") {
-			if (timer) clearInterval(timer);
-			if (timeout) clearTimeout(timeout);
-			timeout = null;
-			timer = null;
-			// changeState("off", false); // Change to off state
+
+		else if (request.command === "pauseTimer") {
+			if (timer){
+				clearInterval(timer);
+			} 
+
+			console.log("Paused Timer (Current Time): " + currentTime);
+			
 			chrome.runtime.sendMessage({
 				command: "timerEnded"
 			});
 		}
+		else if (request.command === "cancelTimer"){
+
+			clearInterval(timer);
+			timer = null;
+		}
+
+		else if (request.command === "resumeTimer"){
+
+			console.log("Resume time: " + currentTime);
+
+			// if(!timer){
+				setInterval(startTimer,currentTime);
+			// }
+		}
+		
 	});
 
-/**
- * Helper Functions
- */
+
 
 // Start Timer is responsible for sending updates to programmingTimer.js every second
-function startTimer() {
+function startTimer(getTime) {
 
 	let options = {
 		message: "finish",
 		break:"Take a Break!"
 
 	}
+	// Using the moment.js library
 	let start = moment();
 	timer = setInterval(function() {
-		let difference = moment().diff(start, 'seconds');
 		
-		let length = localStorage["time-selection"] || 10
-	    if (difference > length) {
-			stopTimer(timer);
+		getTime = moment().diff(start, 'seconds');
+		currentTime = getTime
 
-			chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
-				chrome.tabs.sendMessage(tabs[0].id, options, function(response) {
-				  console.log(response.farewell);
-				});
-			  });
+		chrome.storage.sync.get(['time'], function(result) {
+			console.log('Your time is currently ' + result.time);
 
-			return;
+
+			// let length = localStorage["time-selection"] || 10
+
+	        if (currentTime > result.time) {
+				stopTimer(timer);
+
+				// Will send a message to Popup.js when timer is done for for the tab the user is currently on
+				chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
 			
+					chrome.tabs.sendMessage(tabs[0].id, options, function() {
+
+					});					
+				});
+			return;		
 	    }
-	    sendUpdatedTime(difference);
+	    	sendUpdatedTime(currentTime);
+
+		});
+				
 	}, 1000);
 }
 
 // Will send a message to programmingTimer.js to keep updating the time in m:ss format
 function sendUpdatedTime(difference) {
-	var time = moment().startOf("day").seconds(difference).format("m:ss");
+	let time = moment().startOf("day").seconds(difference).format("m:ss");
+
 	chrome.runtime.sendMessage({
 		"command": "updateTime",
 		"time": time
@@ -97,7 +125,6 @@ function notifyUser() {
 
 		let options = {
 
-
 			type:'basic',
 			iconUrl:'main.png',
 			title:'Break Time!',
@@ -105,11 +132,13 @@ function notifyUser() {
 		
 		}
 
-
 	chrome.notifications.create(options, function() {
 		console.log(" notification created.");
-	}); // Callback function as 3rd parameter is required.
+	}); 
 }
+
+
+
 
 // /**
 //  * Called during a change of state during usual flow.
@@ -143,18 +172,6 @@ function notifyUser() {
 // }
 
 
-// function changeInnerText(){
-
-
-
-	// chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
-	// 	chrome.tabs.sendMessage(tabs[0].id, {message: "finish"}, function(response) {
-	// 	  console.log(response.farewell);
-	// 	});
-	//   });
-
-
-// }
 
 
 
