@@ -10,6 +10,16 @@
 	      height: 300px;
         text-align: center;
       }
+
+      /* .timer-container {
+
+        display: none;
+      } */
+
+      #cancel {
+
+        color: red;
+      }
     
     </style>
    
@@ -41,8 +51,29 @@
     
         </div>
     
-        <!-- <button type="button" id="startButton" > Start Coding!</button> -->
-        <a href="programmingTimer.html"><button type="button" id="startButton" > Start Coding!</button></a>
+        <button type="button" id="startButton" > Start Coding!</button>
+        <!-- <a href="programmingTimer.html"><button type="button" id="startButton" > Start Coding!</button></a> -->
+
+    </div>
+
+    <div class="timer-container">
+
+        <h1>Programming Timer</h1>
+
+        <hr>
+    
+    
+        <div id="current-state">
+            <h2 id="current-time"></h2>
+        </div>
+    
+        <!-- <button type="button" id="pause"> Pause</button>
+        <button type="button" id="resume"> Resume</button> -->
+        <button type="button" id="restart"> Restart</button>
+    
+        <button type="button" id="cancel" >Cancel</button>
+        <!-- <a href="popup.html"><button type="button" id="cancel">Cancel</button></a> -->
+    
 
     </div>
 

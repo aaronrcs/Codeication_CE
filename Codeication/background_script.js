@@ -1,26 +1,17 @@
 console.log("background running");
 
 // Global Variables
-let timerStates = {
-	"off" : {"state": "off", "html": "popup.html", "nextState": "pomodoro"},
-
-},
-    stateKey = "off",
-    currentState = timerStates[stateKey],
+let 
 	timer,
 	currentTime,
     timeout;
 
 
-
 // Add message listeners for messages from programmingTimer.js
 chrome.runtime.onMessage.addListener(
 	function(request, sender, sendResponse) {
-		// Only start timer if timer was initially off. No delay.
-		if (request.command === "startTimer" && stateKey === "off") {
+		if (request.command === "startTimer") {
 			startTimer(currentTime);
-
-			// changeToNextState(false);
 
 			sendResponse({message: "Timer started."});
 		}
@@ -41,15 +32,23 @@ chrome.runtime.onMessage.addListener(
 			clearInterval(timer);
 			timer = null;
 		}
+		else if(request.command === "restartTimer"){
 
-		else if (request.command === "resumeTimer"){
+			clearInterval(timer);
+			timer = null;
 
-			console.log("Resume time: " + currentTime);
+			startTimer(currentTime);
 
-			// if(!timer){
-				setInterval(startTimer,currentTime);
-			// }
 		}
+
+		// else if (request.command === "resumeTimer"){
+
+		// 	console.log("Resume time: " + currentTime);
+
+		// 	// if(!timer){
+		// 		setInterval(startTimer,currentTime);
+		// 	// }
+		// }
 		
 	});
 
@@ -95,7 +94,7 @@ function startTimer(getTime) {
 	}, 1000);
 }
 
-// Will send a message to programmingTimer.js to keep updating the time in m:ss format
+// Will send a message to popup.js to keep updating the time in m:ss format
 function sendUpdatedTime(difference) {
 	let time = moment().startOf("day").seconds(difference).format("m:ss");
 
@@ -112,7 +111,6 @@ function stopTimer() {
 	timer = null;
 	notifyUser();
 
-	// changeToNextState(true);
 	chrome.runtime.sendMessage({
 		command: "timerEnded"
 	});
@@ -120,8 +118,6 @@ function stopTimer() {
 
 // Creates chrome notification 
 function notifyUser() {
-	// var idBase = currentState.notificationBaseId;
-	// var id = idBase + (new Date()).getTime();
 
 		let options = {
 
@@ -138,38 +134,6 @@ function notifyUser() {
 }
 
 
-
-
-// /**
-//  * Called during a change of state during usual flow.
-//  */
-// function changeToNextState(isDelayed) {
-// 	nextStateKey = currentState.nextState;
-// 	changeState(nextStateKey, isDelayed);
-// }
-
-/**
- * Called when we want to change to a specific state. isDelayed parameter allows
- * us to introduce a delay for before the next timer is started (ex. 10 seconds
- * between the pomodoro period is over and the break begins to give user time to
- * wrap up.).
- */
-// function changeState(nextStateKey, isDelayed) {
-// 	stateKey = nextStateKey;
-// 	currentState = timerStates[stateKey];
-// 	chrome.browserAction.setPopup({
-// 		"popup": currentState.html
-// 	});
-
-// 	// We know it's a time period of some sort.
-// 	if (currentState.hasOwnProperty("length")) {
-// 		// Delay?
-// 		if (isDelayed) {
-// 			timeout	= setTimeout(startTimer, currentState.delay*1000);
-// 		}
-// 		else startTimer();
-// 	}
-// }
 
 
 
