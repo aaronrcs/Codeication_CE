@@ -18,26 +18,49 @@ chrome.runtime.onMessage.addListener(
 		
 	});
 
+
+// JQuery Code for slider
+
+$(document).ready(function() {
+
+	$("#slider").slider({
+
+		min:0,
+		max:150,
+		step:5,
+		
+		change: function(event, ui) {
+			$('#time').html(ui.value);
+			getUserTime(ui.value);
+
+		}
+
+	});
+
+
+});
+
+
 // Will attach click handlers to each button when the page is initally loaded
 
 function init() {
 
-	reloadPage();
+	// reloadPage();
 	cancel();
 	restart();
 	addMessageListeners();		
 
-    document.getElementById("time").innerText = localStorage["time-buttons"] || 10;
+    // document.getElementById("time").innerText = localStorage["time-buttons"] || 10;
 
 
-	let buttonGroups = document.getElementsByClassName("time-buttons")
-	Array.prototype.forEach.call(buttonGroups, function(divElem) {
+	// let buttonGroups = document.getElementsByClassName("time-buttons")
+	// Array.prototype.forEach.call(buttonGroups, function(divElem) {
 
-		Array.prototype.forEach.call(divElem.childNodes, function(elem) {
-			elem.onclick = timeButtonOnClickHandler;
-		});
+	// 	Array.prototype.forEach.call(divElem.childNodes, function(elem) {
+	// 		elem.onclick = timeButtonOnClickHandler;
+	// 	});
 
-	});
+	// });
 
 }
 
@@ -86,9 +109,7 @@ function startTimer() {
 			console.log(response.message);
 		});
 
-
 	}
-
 
 }
 
@@ -132,18 +153,17 @@ function addMessageListeners() {
 
 
 // Grabbing user inputs
-function timeButtonOnClickHandler(event) {
-	let targetElem = event.target;
-    let timeSelected = +targetElem.innerText; // Get button text and convert to number
+function getUserTime(getTime) {
+	// let targetElem = event.target;
+	// // Get button text and convert to number
+    // let timeSelected = +targetElem.innerText; 
 
-    document.getElementById("time").innerText = timeSelected // Will show user what time was selected below buttons 
-        
-	// localStorage["time-selection"] = timeSelected; // Save in localstorage.
-	
+    // document.getElementById("time").innerText = timeSelected  
+        	
 	//Saving user data using Storage API.
-	chrome.storage.sync.set({'time': timeSelected}, function() {
+	chrome.storage.sync.set({'time': getTime}, function() {
 		
-		console.log('You choose ' + timeSelected + ' minutes.' );
+		console.log('You choose ' + getTime + ' minutes.' );
 	  });
     
 }

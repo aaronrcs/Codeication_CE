@@ -96,6 +96,7 @@ function startTimer(getTime) {
 
 // Will send a message to popup.js to keep updating the time in m:ss format
 function sendUpdatedTime(difference) {
+
 	let time = moment().startOf("day").seconds(difference).format("m:ss");
 
 	chrome.runtime.sendMessage({
