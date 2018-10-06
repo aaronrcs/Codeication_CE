@@ -25,18 +25,16 @@ $(document).ready(function() {
 
 	$("#slider").slider({
 
-		min:0,
+		min:10,
 		max:150,
-		step:5,
+		step:10,
 		
 		change: function(event, ui) {
 			$('#time').html(ui.value);
 			getUserTime(ui.value);
-
 		}
 
 	});
-
 
 });
 
@@ -50,17 +48,24 @@ function init() {
 	restart();
 	addMessageListeners();		
 
-    // document.getElementById("time").innerText = localStorage["time-buttons"] || 10;
+	document.getElementById("time").innerText = 10;
 
 
-	// let buttonGroups = document.getElementsByClassName("time-buttons")
-	// Array.prototype.forEach.call(buttonGroups, function(divElem) {
+	let checkTime = document.getElementById("current-time");
 
-	// 	Array.prototype.forEach.call(divElem.childNodes, function(elem) {
-	// 		elem.onclick = timeButtonOnClickHandler;
-	// 	});
+	if(checkTime.innerText == 0){
 
-	// });
+		$('.timer-container').hide();
+
+
+	}
+	// else if(checkTime.innerText != 0) {
+
+	// 	$( ".timer-container" ).show();
+
+
+	// }
+	
 
 }
 
@@ -101,7 +106,7 @@ function startTimer() {
 
 		$( ".timer-container" ).slideDown( "slow", function() {
 
-		  });
+		});
 
 		chrome.runtime.sendMessage({
 			"command": "startTimer"
@@ -160,10 +165,14 @@ function getUserTime(getTime) {
 
     // document.getElementById("time").innerText = timeSelected  
         	
+
+	let getMinutes = getTime * 60;
+
 	//Saving user data using Storage API.
-	chrome.storage.sync.set({'time': getTime}, function() {
+
+	chrome.storage.sync.set({'time': getMinutes}, function() {
 		
-		console.log('You choose ' + getTime + ' minutes.' );
+		console.log('You choose ' + getMinutes/60 + ' minutes.' );
 	  });
     
 }
