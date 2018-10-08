@@ -50,21 +50,9 @@ function init() {
 
 	document.getElementById("time").innerText = 10;
 
-
-	let checkTime = document.getElementById("current-time");
-
-	if(checkTime.innerText == 0){
-
-		$('.timer-container').hide();
+	$('.timer-container').hide();
 
 
-	}
-	// else if(checkTime.innerText != 0) {
-
-	// 	$( ".timer-container" ).show();
-
-
-	// }
 	
 
 }
@@ -143,6 +131,20 @@ let reloadPage = function(){
 // Handling various messages from background page to check whether timer has ended or to keep updating timer
 function addMessageListeners() {
 	chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
+
+		let checkTime = request.time;
+
+		/* This if statement will check if the timer has started. If true, the timer 
+		will always be visible for the user whether they click on/off of the application.
+		Timer will remain hidden until the user has choosen a time.
+		*/
+
+		if(checkTime){
+
+			$('.timer-container').slideDown();
+
+		}
+
 		switch(request.command) {
 			case "updateTime":
 				document.getElementById("current-time").innerText = request.time;
