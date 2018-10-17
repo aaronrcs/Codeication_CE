@@ -10,6 +10,11 @@ chrome.runtime.onMessage.addListener(
 
 		for(i of paragraphs){
 
+			// 0%   {background-color:red; left:0px; top:0px;}
+    		// 25%  {background-color:yellow; left:200px; top:0px;}
+
+			// $("p").css({"background-color": "red", "left": "0px","top":"0px",""});
+
 			i.style['color'] = 'red'
 			i.innerHTML = "<strong>" + request.break + "</strong>"
 		}
@@ -19,9 +24,13 @@ chrome.runtime.onMessage.addListener(
 	});
 
 
-// JQuery Code for slider
 
-$(document).ready(function() {
+
+// Will attach click handlers to each button when the page is initally loaded
+
+function init() {
+
+	// JQuery Code for Slider
 
 	$("#slider").slider({
 
@@ -32,23 +41,19 @@ $(document).ready(function() {
 		change: function(event, ui) {
 			$('#time').html(ui.value);
 			getUserTime(ui.value);
+
 		}
 
 	});
 
-});
+	document.getElementById("time").innerText = 10;
 
 
-// Will attach click handlers to each button when the page is initally loaded
-
-function init() {
-
-	// reloadPage();
+	reloadPage();
 	cancel();
 	restart();
 	addMessageListeners();		
 
-	document.getElementById("time").innerText = 10;
 
 	$('.timer-container').hide();
 
@@ -56,8 +61,6 @@ function init() {
 	
 
 }
-
-startTimer();
 
 
 // function for allowing the user to cancel their current time
@@ -106,8 +109,11 @@ function startTimer() {
 
 }
 
+startTimer();
+
+
 // // Will reload page when Chrome Extension is used in different browsers
-let reloadPage = function(){
+let reloadPage = () => {
 
 
 	// chrome.tabs.query({active:true, currentWindow: true}, (tabs)=>{
@@ -119,8 +125,11 @@ let reloadPage = function(){
 		
 	// });
 
+	// Need to check whether the tabs have completed loading
 	chrome.tabs.query({status:'complete'}, (tabs)=>{
 		tabs.forEach((tab)=>{
+
+			// This if will force reload all tabs when accessing extension
 			if(tab.url){
 				chrome.tabs.update(tab.id,{url: tab.url});
 			 }
@@ -147,7 +156,7 @@ function addMessageListeners() {
 
 		switch(request.command) {
 			case "updateTime":
-				document.getElementById("current-time").innerText = request.time;
+				document.getElementById("current-time").innerText = checkTime;
 				break;
 			case "timerEnded":
 				
@@ -161,20 +170,14 @@ function addMessageListeners() {
 
 // Grabbing user inputs
 function getUserTime(getTime) {
-	// let targetElem = event.target;
-	// // Get button text and convert to number
-    // let timeSelected = +targetElem.innerText; 
-
-    // document.getElementById("time").innerText = timeSelected  
-        	
-
+	
 	let getMinutes = getTime * 60;
 
 	//Saving user data using Storage API.
 
 	chrome.storage.sync.set({'time': getMinutes}, function() {
 		
-		console.log('You choose ' + getMinutes/60 + ' minutes.' );
+		// console.log('You choose ' + getMinutes/60 + ' minutes.' );
 	  });
     
 }
@@ -199,7 +202,7 @@ function getUserTime(getTime) {
 // 	}
 // }
 
-
+// This event will get the DOM ready to go
 document.addEventListener('DOMContentLoaded', init);
 
 

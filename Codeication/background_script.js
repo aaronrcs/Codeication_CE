@@ -62,18 +62,20 @@ function startTimer(getTime) {
 		break:"Take a Break!"
 
 	}
-	// Using the moment.js library
+	// Using the moment.js library to get current date and time
 	let start = moment();
 	timer = setInterval(function() {
 		
 		getTime = moment().diff(start, 'seconds');
+
+		console.log("GetTIme: " + getTime);
 
 		currentTime = getTime
 
 		chrome.storage.sync.get(['time'], function(result) {
 			console.log('Your time is currently ' + result.time);
 
-	        if (result.time < currentTime ) {
+	        if (currentTime > result.time ) {
 				stopTimer(timer);
 
 				// Will send a message to Popup.js when timer is done for for the tab the user is currently on
@@ -95,8 +97,8 @@ function startTimer(getTime) {
 // Will send a message to popup.js to keep updating the time in m:ss format
 function sendUpdatedTime(difference) {
 
-
-	let time = moment().startOf("day").seconds(difference).format("m:ss");
+	// Will keep udating the time in the current time, which is this case its in seconds
+	let time = moment().startOf("day").seconds(difference).format("HH:mm:ss");
 
 	chrome.runtime.sendMessage({
 		"command": "updateTime",
