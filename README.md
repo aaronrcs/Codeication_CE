@@ -7,7 +7,7 @@ I created a Chrome Extension called "Codeication" that allows programmers to cho
 
 Languages: Javascript, HTML, CSS
 
-Libraries: MomentJs
+Libraries: MomentJs, JQuery/JQuery UI
 
 Getting started with Chrome Extension API: https://developer.chrome.com/extensions/getstarted
 
