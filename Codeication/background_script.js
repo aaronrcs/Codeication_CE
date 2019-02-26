@@ -68,14 +68,11 @@ function startTimer(getTime) {
 		
 		getTime = moment().diff(start, 'seconds');
 
-		console.log("GetTIme: " + getTime);
-
 		currentTime = getTime
 
 		chrome.storage.sync.get(['time'], function(result) {
-			console.log('Your time is currently ' + result.time);
 
-	        if (currentTime > result.time ) {
+	        if (currentTime > result.time) {
 				stopTimer(timer);
 
 				// Will send a message to Popup.js when timer is done for for the tab the user is currently on
@@ -87,7 +84,7 @@ function startTimer(getTime) {
 				});
 			return;		
 	    }
-	    	sendUpdatedTime(currentTime);
+	    	sendUpdatedTime(currentTime, result.time);
 
 		});
 				
@@ -95,11 +92,20 @@ function startTimer(getTime) {
 }
 
 // Will send a message to popup.js to keep updating the time in m:ss format
-function sendUpdatedTime(difference) {
+function sendUpdatedTime(currentTime, timeValue) {
 
-	// Will keep udating the time in the current time, which is this case its in seconds
-	let time = moment().startOf("day").seconds(difference).format("HH:mm:ss");
+	
+	// If the time choosen by user is below an hour it will format the time in mm:ss
+	// else it will be formatted HH:mm:ss
+	let time;
 
+	if(timeValue < 3600){
+		time = moment().startOf("day").seconds(currentTime).format("mm:ss");
+	}else{
+		time = moment().startOf("day").seconds(currentTime).format("HH:mm:ss");
+
+	}
+	
 	chrome.runtime.sendMessage({
 		"command": "updateTime",
 		"time": time

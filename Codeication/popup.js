@@ -1,3 +1,7 @@
+let timer;
+let getReloadTimes;
+let getStart;
+
 // This will listen/wait for an oncoming message from background_script.js
 // Once the timer is finished the brower will be modified
 chrome.runtime.onMessage.addListener(
@@ -23,8 +27,7 @@ chrome.runtime.onMessage.addListener(
 		
 	});
 
-
-
+	
 
 // Will attach click handlers to each button when the page is initally loaded
 
@@ -35,11 +38,17 @@ function init() {
 	$("#slider").slider({
 
 		min:10,
-		max:150,
+		max:200,
 		step:10,
 		
 		change: function(event, ui) {
-			$('#time').html(ui.value);
+
+			if(ui.value >= 60){
+				convertMinutes(ui.value);
+			}else{
+				$('#time').html(ui.value);
+			}
+			
 			getUserTime(ui.value);
 
 		}
@@ -47,9 +56,8 @@ function init() {
 	});
 
 	document.getElementById("time").innerText = 10;
+	
 
-
-	reloadPage();
 	cancel();
 	restart();
 	addMessageListeners();		
@@ -58,8 +66,19 @@ function init() {
 	$('.timer-container').hide();
 
 
-	
+}
 
+// Converting Minutes to Hours when minutes go greater than 60 minutes
+
+let convertMinutes = (value) => {
+	let hour = Math.floor(value/60);
+	let minutes = value % 60;
+
+	if(hour > 1){
+		$('#time').html(hour + " hours and " + minutes);
+	}else{
+		$('#time').html(hour + " hour and " + minutes);
+	}
 }
 
 
@@ -94,9 +113,20 @@ function restart(){
 // Send message to Background page to start timer
 function startTimer() {
 	document.getElementById("startButton").onclick = function(){
-
+		
 		$( ".timer-container" ).slideDown( "slow", function() {
 
+			console.log("Start: " + getStart);
+
+			// If getStart is undefined it will reload all current tabs open
+			// But next time this callback function occurs, getStart will be 'True'
+			// thus it won't force a relaod to all current tabs open
+			if(getStart === undefined){
+
+				getStart = true;
+				reloadPage();
+			}
+			
 		});
 
 		chrome.runtime.sendMessage({
@@ -115,7 +145,7 @@ startTimer();
 // // Will reload page when Chrome Extension is used in different browsers
 let reloadPage = () => {
 
-
+	
 	// chrome.tabs.query({active:true, currentWindow: true}, (tabs)=>{
 	
 	// 	chrome.tabs.reload(tabs[0].id, function(){
@@ -127,19 +157,26 @@ let reloadPage = () => {
 
 	// Need to check whether the tabs have completed loading
 	chrome.tabs.query({status:'complete'}, (tabs)=>{
+
 		tabs.forEach((tab)=>{
 
 			// This if will force reload all tabs when accessing extension
 			if(tab.url){
+
 				chrome.tabs.update(tab.id,{url: tab.url});
+
 			 }
+			 
 			});
+
 		});
 }
 
 // Handling various messages from background page to check whether timer has ended or to keep updating timer
 function addMessageListeners() {
 	chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
+
+		timer = request.time;
 
 		let checkTime = request.time;
 
@@ -165,7 +202,6 @@ function addMessageListeners() {
 		}
 	});
 }
-
 
 
 // Grabbing user inputs
@@ -203,6 +239,7 @@ function getUserTime(getTime) {
 // }
 
 // This event will get the DOM ready to go
-document.addEventListener('DOMContentLoaded', init);
+// document.addEventListener('DOMContentLoaded', init);
+window.onload = init();
 
 
