@@ -59,7 +59,8 @@ function startTimer(getTime) {
 
 	let options = {
 		message: "finish",
-		break:"Take a Break!"
+		break:"Take a Break!",
+		break2:'Go for a walk, stop coding!'
 
 	}
 	// Using the moment.js library to get current date and time

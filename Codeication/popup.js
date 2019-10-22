@@ -10,17 +10,24 @@ chrome.runtime.onMessage.addListener(
 
 	  if (request.message == "finish"){
 
-		let paragraphs = document.getElementsByTagName('p');
+		const randomColors = ['red','blue','purple','yellow','pink','green'];
+
+		let paragraphs = document.querySelectorAll('p,span');
+		let headers = document.querySelectorAll('h1,h2,h3,h4');
+		let randomValue = Math.floor((Math.random() * randomColors.length));
+		let randomValue2 = Math.floor((Math.random() * randomColors.length));
+
 
 		for(i of paragraphs){
 
-			// 0%   {background-color:red; left:0px; top:0px;}
-    		// 25%  {background-color:yellow; left:200px; top:0px;}
-
-			// $("p").css({"background-color": "red", "left": "0px","top":"0px",""});
-
-			i.style['color'] = 'red'
+			i.style['color'] = randomColors[randomValue];
 			i.innerHTML = "<strong>" + request.break + "</strong>"
+		}
+
+		for(i of headers){
+
+			i.style['color'] = randomColors[randomValue2];
+			i.innerHTML = "<strong>" + request.break2 + "</strong>"
 		}
 
 	  }
@@ -37,7 +44,7 @@ function init() {
 
 	$("#slider").slider({
 
-		min:10,
+		min:30,
 		max:200,
 		step:10,
 		
@@ -55,16 +62,14 @@ function init() {
 
 	});
 
-	document.getElementById("time").innerText = 10;
+	document.getElementById("time").innerText = 30;
 	
 
 	cancel();
 	restart();
 	addMessageListeners();		
 
-
 	$('.timer-container').hide();
-
 
 }
 
@@ -214,7 +219,7 @@ function getUserTime(getTime) {
 	chrome.storage.sync.set({'time': getMinutes}, function() {
 		
 		// console.log('You choose ' + getMinutes/60 + ' minutes.' );
-	  });
+	});
     
 }
 
