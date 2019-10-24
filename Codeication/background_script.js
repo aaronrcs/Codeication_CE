@@ -4,7 +4,37 @@ console.log("background running");
 let 
 	timer,
 	currentTime,
-    timeout;
+	timeout;
+
+// Executing script once
+
+// chrome.runtime.onMessage.addListener(
+// 	function(request, sender, sendResponse) {
+// 		// console.log("Tab url: ", tab.url)
+// 		if (request.command === "startTimer"){
+// 			setInterval(function(){
+// 				chrome.tabs.query({status:"complete"},(tabs)=>{
+
+// 					tabs.forEach(tab => {
+// 						console.log("Tab url, ", tab.url, " tab id: ", tab.id);
+// 						chrome.tabs.executeScript(tab.id,{
+// 							file: 'takeabreak.js'
+// 						});
+
+// 					});
+					
+// 				})
+// 			},3000)
+// 			chrome.tabs.getSelected(null,function(tab){
+// 				console.log("Tab url, ", tab.url, " tab id: ", tab.id);
+// 				chrome.tabs.executeScript(tab.id,{
+// 					file: 'takeabreak.js'
+// 				});
+			
+// 			})
+			
+// 		}
+// });
 
 
 // Add message listeners for messages from programmingTimer.js

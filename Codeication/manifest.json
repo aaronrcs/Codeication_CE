@@ -20,7 +20,7 @@
 			"js": ["popup.js", "jquery.js"]
 		}
 	],
-
+	
 	"background": {
 
 		"scripts": ["background_script.js", "moment.js"],
